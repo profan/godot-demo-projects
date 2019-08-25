@@ -3,7 +3,7 @@ extends TileMap
 # You can only create an AStar node from code, not from the Scene tab
 onready var astar_node = AStar.new()
 # The Tilemap node doesn't have clear bounds so we're defining the map's limits here
-export(Vector2) var map_size = Vector2(16, 16)
+export(Vector2) var map_size = Vector2(512, 512)
 
 # The path start and end variables use setter methods
 # You can find them at the bottom of the script
@@ -21,8 +21,10 @@ onready var obstacles = get_used_cells_by_id(0)
 onready var _half_cell_size = cell_size / 2
 
 func _ready():
+	print("Start building AStar: %s" % OS.get_ticks_msec())
 	var walkable_cells_list = astar_add_walkable_cells(obstacles)
 	astar_connect_walkable_cells(walkable_cells_list)
+	print("Done building AStar: %s" % OS.get_ticks_msec())
 
 
 # Click and Shift force the start and end position of the path to update
@@ -44,7 +46,8 @@ func astar_add_walkable_cells(obstacles = []):
 			var point = Vector2(x, y)
 			if point in obstacles:
 				continue
-
+			if randi() % 5 == 0:
+				continue
 			points_array.append(point)
 			# The AStar class references points with indices
 			# Using a function to calculate the index from a point's coordinates
